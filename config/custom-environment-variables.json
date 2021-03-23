@@ -1,0 +1,7 @@
+{
+  "nodeUrl": "NODE_URL",
+  "epochDuration": "EPOCH_DURATION",
+  "rewardsPerEpoch": "REWARDS_PER_EPOCH",
+  "rewardsStartBlock": "REWARDS_START_BLOCK",
+  "rewardsEndBlock": "REWARDS_END_BLOCK"
+}

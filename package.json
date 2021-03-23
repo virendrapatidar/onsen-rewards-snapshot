@@ -1,0 +1,23 @@
+{
+  "name": "lp-rewards-snapshot",
+  "version": "1.0.0",
+  "description": "Sushi Onsen rewards snapshot script",
+  "author": "rohit@bloq.com",
+  "license": "ISC",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint --cache --ext .js .",
+    "lint-fix": "eslint --fix --cache --ext .js ."
+  },
+  "dependencies": {
+    "config": "^3.3.6",
+    "erc-20-abi": "^1.0.0",
+    "json2csv": "^5.0.6",
+    "web3": "^1.3.4"
+  },
+  "devDependencies": {
+    "eslint": "^7.19.0",
+    "eslint-config-bloq": "^2.4.0"
+  },
+  "private": true
+}

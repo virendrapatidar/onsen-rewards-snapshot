@@ -1,0 +1,9 @@
+*~
+node_modules/
+.eslintcache
+*.csv
+*.tar.gz
+*.sh
+local.json
+*.env*
+rewards.json
