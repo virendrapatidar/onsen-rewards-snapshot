@@ -11,16 +11,16 @@ npm i
 2. Set required properties. There are 2 ways to do it, choose what seems best to you.
 - Using env var
 ```bash
-export NODE_URL="eth mainnet url"
-export REWARDS_START_BLOCK="eth block number"
-export REWARDS_END_BLOCK="eth block number"
+export NODE_URL="eth_mainnet_url"
+export REWARDS_START_BLOCK="eth_block_number"
+export REWARDS_END_BLOCK="eth_block_number"
 ```
 - Using `config/local.json`
 ```json
 {
-    "nodeUrl": "eth mainnet url",
-    "rewardsStartBlock": "eth block number",
-    "rewardsEndBlock": "eth block number"
+    "nodeUrl": "eth_mainnet_url",
+    "rewardsStartBlock": "eth_block_number",
+    "rewardsEndBlock": "eth_block_number"
 }
 ```
 
