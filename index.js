@@ -11,8 +11,8 @@ const { getRewardsForAllEpoch } = require('./src/calculateRewards')
 const onsenData = require('./src/onsenData')
 
 const nodeUrl = config.get('nodeUrl')
-const rewardsStartBlock = config.get('rewardsStartBlock')
-const rewardsEndBlock = config.get('rewardsEndBlock')
+const rewardsStartBlock = parseInt(config.get('rewardsStartBlock'))
+const rewardsEndBlock = parseInt(config.get('rewardsEndBlock'))
 
 console.log('Rewards Start Block:', rewardsStartBlock)
 console.log('Rewards End Block:', rewardsEndBlock)
