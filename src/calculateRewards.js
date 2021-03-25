@@ -21,7 +21,7 @@ const lpStakingPool = new web3.eth.Contract(
 
 const lpPair = new web3.eth.Contract(lpPairAbi, onsenData.pair.address)
 
-function getRewards(addressList, epochEndBlock) {
+function getRewards(addressList, epochEndBlock, thisEpochDuration) {
   return lpPair.methods
     .balanceOf(onsenData.lpStakingPoolAddress)
     .call(epochEndBlock)
@@ -33,7 +33,9 @@ function getRewards(addressList, epochEndBlock) {
           .call(epochEndBlock)
           .then(function (userInfo) {
             const rewards = new BN(userInfo.amount)
-              .mul(rewardsPerEpoch)
+              .mul(new BN(rewardsPerEpoch))
+              .mul(new BN(thisEpochDuration))
+              .div(new BN(epochDuration))
               .div(new BN(lpBalance))
             return {
               address,
@@ -55,8 +57,17 @@ async function getRewardsForAllEpoch(addressList, startBlock, endBlock) {
   let epochEndBlock = startBlock
   while (epochEndBlock < endBlock) {
     epochEndBlock = epochEndBlock + epochDuration
-    epochEndBlock = epochEndBlock > endBlock ? endBlock : epochEndBlock
-    promises.push(getRewards(addressList, epochEndBlock))
+    if (epochEndBlock > endBlock) {
+      promises.push(
+        getRewards(
+          addressList,
+          epochEndBlock,
+          endBlock + epochDuration - epochEndBlock
+        )
+      )
+    } else {
+      promises.push(getRewards(addressList, epochEndBlock, epochDuration))
+    }
   }
   return Promise.all(promises)
 }
