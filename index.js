@@ -17,15 +17,13 @@ const rewardsEndBlock = parseInt(config.get('rewardsEndBlock'))
 console.log('Rewards Start Block:', rewardsStartBlock)
 console.log('Rewards End Block:', rewardsEndBlock)
 
-function totalEpoch() {
-  const totalBlock = rewardsEndBlock - rewardsStartBlock
-  const epochDuration = parseInt(config.get('epochDuration'))
-  return Math.ceil(totalBlock / epochDuration)
-}
-
 function totalRewards() {
+  const DECIMAL = new BN('1000000000000000000')
+  const totalBlocks = rewardsEndBlock - rewardsStartBlock
+  const epochDuration = new BN(config.get('epochDuration'))
+  const totalEpoch = new BN(totalBlocks).mul(DECIMAL).div(epochDuration)
   const rewardsPerEpoch = new BN(config.get('rewardsPerEpoch'))
-  return rewardsPerEpoch.mul(new BN(totalEpoch())).toString()
+  return rewardsPerEpoch.mul(totalEpoch).div(DECIMAL).toString()
 }
 
 function onlyUnique(value, index, self) {
