@@ -68,14 +68,14 @@ function writeConsolidateRewards(allEpochRewards) {
   let calculateRewards = new BN('0')
   Object.values(accounts).forEach(function (account) {
     calculateRewards = calculateRewards.add(new BN(account.rewards))
-    accountsList.push({ address: account.address, rewards: account.rewards })
+    accountsList.push({ account: account.address, amount: account.rewards })
   })
 
   console.log('Unique address with rewards', accountsList.length)
   console.log('Total rewards to distibute:', totalRewards())
   console.log('Calculated total rewards:', calculateRewards.toString())
 
-  const fileName = './rewards.json'
+  const fileName = `./rewards-${rewardsStartBlock}-${rewardsEndBlock}.json`
   console.log('Writing consolidated rewards data to', fileName)
 
   fs.writeFileSync(fileName, JSON.stringify(accountsList, null, 2))
