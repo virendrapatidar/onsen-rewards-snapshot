@@ -61,7 +61,7 @@ async function getRewardsForAllEpoch(addressList, startBlock, endBlock) {
       promises.push(
         getRewards(
           addressList,
-          epochEndBlock,
+          endBlock,
           endBlock + epochDuration - epochEndBlock
         )
       )
