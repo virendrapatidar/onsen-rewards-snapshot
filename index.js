@@ -10,9 +10,11 @@ const lpStakingPoolAbi = require('./src/abi/masterChef.json')
 const { getRewardsForAllEpoch } = require('./src/calculateRewards')
 const onsenData = require('./src/onsenData')
 
-const nodeUrl = config.get('nodeUrl')
-const rewardsStartBlock = parseInt(config.get('rewardsStartBlock'))
-const rewardsEndBlock = parseInt(config.get('rewardsEndBlock'))
+const args = require('minimist')(process.argv.slice(2))
+
+const nodeUrl = args.u || config.get('nodeUrl')
+const rewardsStartBlock = args.s || parseInt(config.get('rewardsStartBlock'))
+const rewardsEndBlock = args.e || parseInt(config.get('rewardsEndBlock'))
 
 console.log('Rewards Start Block:', rewardsStartBlock)
 console.log('Rewards End Block:', rewardsEndBlock)

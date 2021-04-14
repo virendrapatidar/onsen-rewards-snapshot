@@ -8,7 +8,7 @@ Generate snapshot for distributing Vesper rewards to staker of VSP-ETH LP token 
 npm i
 ```
 
-2. Set required properties. There are 2 ways to do it, choose what seems best to you.
+2. Set required properties. There are 3 ways to do it, choose what seems best to you.
 - Using env var
 ```bash
 export NODE_URL="eth_mainnet_url"
@@ -22,6 +22,10 @@ export REWARDS_END_BLOCK="eth_block_number"
     "rewardsStartBlock": "eth_block_number",
     "rewardsEndBlock": "eth_block_number"
 }
+```
+- Using command line args (which take precedence over the other two methods)
+```bash
+$ node index.js -s <start_block_num> -e <end_block_num> -u <node_url>
 ```
 
 3. Verify that default properties are valid for you case, if not use env var or `local.json` to override them.
