@@ -8,37 +8,59 @@ Generate snapshot for distributing Vesper rewards to staker of VSP-ETH LP token 
 npm i
 ```
 
-2. Set required properties. There are 3 ways to do it, choose what seems best to you.
-- Using env var
-```bash
+2. Set required properties
+- Set variables for NODE_URL and MNEMONIC
+```
 export NODE_URL="eth_mainnet_url"
-export REWARDS_START_BLOCK="eth_block_number"
-export REWARDS_END_BLOCK="eth_block_number"
-```
-- Using `config/local.json`
-```json
-{
-    "nodeUrl": "eth_mainnet_url",
-    "rewardsStartBlock": "eth_block_number",
-    "rewardsEndBlock": "eth_block_number"
-}
-```
-- Using command line args (which take precedence over the other two methods)
-```bash
-$ node index.js -s <start_block_num> -e <end_block_num> -u <node_url>
+export MNEMONIC="mnemonic"
 ```
 
-3. Verify that default properties are valid for you case, if not use env var or `local.json` to override them.
-- Default properties
-```json
-{
-  "epochDuration": 1440,
-  "rewardsPerEpoch": "625000000000000000000"
-}
+Set other variables via command line options or export.
+``` 
+export REWARDS_START_BLOCK="rewardsStartBlock"       
+export REWARDS_END_BLOCK="rewardsEndBlock"           
 ```
 
-4. Run app to generate snopshot
-```node
-node index.js
+Check other default values in `config/local.json`  and `config/default.json`
+
+3. Calculate onsen rewards data file using command line args. 
+   
+Command Syntax   
 ```
-> It will generate `rewards.json` file in root of the project. This file contains all the addresses and their rewards for given strat and end block.
+node index.js -s <rewardsStartBlock> -e <rewardsEndBlock>
+```
+
+Example: `calculate-rewards`
+```
+node index.js -s 12194440 -e 12240161
+```
+
+Raise Pull request to verify generated data file. Once PR is verified, approved and merged, call `create-claim` operation. 
+
+4. Create claim using generated data file. 
+
+Command Syntax
+```
+node create-claim.js -f <datasetUrl>
+```
+
+Example: `create-claim`
+```
+node create-claim.js -f "https://raw.githubusercontent.com/vesperfi/onsen-rewards/main/dataset4.json"
+```
+
+Create claim using fork for testing.
+1. Create `config/local.json` and add `nodeUrl`
+```
+{
+  "nodeUrl": "http://localhost:8545"
+}
+```
+2. Create fork
+```
+npm run fork
+```
+3. Run 
+```
+node create-claim.js -f <datasetUrl>
+```

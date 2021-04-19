@@ -1,18 +1,12 @@
-#!/usr/bin/env node
-
-/**
- * Usage:
- *
- *   scripts/create-dataset.js ./recipients.json > dataset.json
- */
-
 'use strict'
+const fs = require('fs')
+const createMerkleBox = require('../packages/merkle-box-lib')
 
-const createMerkleBox = require('..')
-const path = require('path')
+async function createDataSet(inputFileName, outputFileName) {
+  const recipients = require(`../${inputFileName}`)
+  const dataset = createMerkleBox.util.calcDataset(recipients)
+  console.log(`Writing file ${outputFileName}`)
+  fs.writeFileSync(outputFileName, JSON.stringify(dataset, null, 2))
+}
 
-const [recipientsUri] = process.argv.slice(2)
-
-const recipients = require(path.join(process.cwd(), recipientsUri))
-const dataset = createMerkleBox.util.calcDataset(recipients)
-console.log(JSON.stringify(dataset, null, 2))
+module.exports = { createDataSet }

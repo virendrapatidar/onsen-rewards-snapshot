@@ -1,20 +1,26 @@
 'use strict'
-
 const BN = require('bn.js')
 const config = require('config')
+const args = require('minimist')(process.argv.slice(2))
+const rewardsStartBlock = args.s || parseInt(config.get('rewardsStartBlock'))
+const rewardsEndBlock = args.e || parseInt(config.get('rewardsEndBlock'))
+const nodeUrl = config.get('nodeUrl')
+const epochDuration = config.get('epochDuration')
+const rewardsPerEpoch = config.get('rewardsPerEpoch')
+
 const fs = require('fs')
 const { parseAsync } = require('json2csv')
 const Web3 = require('web3')
 
 const lpStakingPoolAbi = require('./src/abi/masterChef.json')
 const { getRewardsForAllEpoch } = require('./src/calculateRewards')
+const { createDataSet } = require('./src/create-dataset')
 const onsenData = require('./src/onsenData')
-
-const args = require('minimist')(process.argv.slice(2))
-
-const nodeUrl = args.u || config.get('nodeUrl')
-const rewardsStartBlock = args.s || parseInt(config.get('rewardsStartBlock'))
-const rewardsEndBlock = args.e || parseInt(config.get('rewardsEndBlock'))
+const dataDirectory = 'data'
+// eslint-disable-next-line max-len
+const rewardFileName = `./${dataDirectory}/rewards-${rewardsStartBlock}-${rewardsEndBlock}.json`
+// eslint-disable-next-line max-len
+const dataSetFileName = `./${dataDirectory}/dataset-${rewardsStartBlock}-${rewardsEndBlock}.json`
 
 console.log('Rewards Start Block:', rewardsStartBlock)
 console.log('Rewards End Block:', rewardsEndBlock)
@@ -22,10 +28,10 @@ console.log('Rewards End Block:', rewardsEndBlock)
 function totalRewards() {
   const DECIMAL = new BN('1000000000000000000')
   const totalBlocks = rewardsEndBlock - rewardsStartBlock
-  const epochDuration = new BN(config.get('epochDuration'))
-  const totalEpoch = new BN(totalBlocks).mul(DECIMAL).div(epochDuration)
-  const rewardsPerEpoch = new BN(config.get('rewardsPerEpoch'))
-  return rewardsPerEpoch.mul(totalEpoch).div(DECIMAL).toString()
+  const _epochDuration = new BN(epochDuration)
+  const totalEpoch = new BN(totalBlocks).mul(DECIMAL).div(_epochDuration)
+  const _rewardsPerEpoch = new BN(rewardsPerEpoch)
+  return _rewardsPerEpoch.mul(totalEpoch).div(DECIMAL).toString()
 }
 
 function onlyUnique(value, index, self) {
@@ -36,10 +42,10 @@ function onlyUnique(value, index, self) {
 function writeEpochRewards(allEpochRewards) {
   const fields = ['address', 'balance', 'epochEnd', 'rewards']
   allEpochRewards.forEach(function (epochRewards) {
-    const fileName = `./output/${epochRewards[0].epochEnd}.csv`
-    console.log('Writing rewards data to', fileName)
+    const epochfileName = `./output/${epochRewards[0].epochEnd}.csv`
+    console.log('Writing epoch rewards data to', epochfileName)
     return parseAsync(epochRewards, { fields }).then(csvData =>
-      fs.writeFileSync(fileName, csvData)
+      fs.writeFileSync(epochfileName, csvData)
     )
   })
   return allEpochRewards
@@ -77,10 +83,9 @@ function writeConsolidateRewards(allEpochRewards) {
   console.log('Total rewards to distibute:', totalRewards())
   console.log('Calculated total rewards:', calculateRewards.toString())
 
-  const fileName = `./rewards-${rewardsStartBlock}-${rewardsEndBlock}.json`
-  console.log('Writing consolidated rewards data to', fileName)
+  console.log('Writing consolidated rewards data to', rewardFileName)
 
-  fs.writeFileSync(fileName, JSON.stringify(accountsList, null, 2))
+  fs.writeFileSync(rewardFileName, JSON.stringify(accountsList, null, 2))
   // Just to terminate the process once done
   setTimeout(() => process.exit(0), 3000)
 }
@@ -119,4 +124,9 @@ getOnsenRewards()
   // if you want data for each epoch, uncomment below line
   // .then(writeEpochRewards)
   .then(writeConsolidateRewards)
+  .then(function () {
+    return createDataSet(rewardFileName, dataSetFileName).then(function () {
+      console.log('data file created')
+    })
+  })
   .catch(e => console.error('Error while calculating rewards', e))
