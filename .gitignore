@@ -6,3 +6,6 @@ node_modules/
 *.sh
 local.json
 *.env*
+*.idea
+*.iml
+.vscode/
