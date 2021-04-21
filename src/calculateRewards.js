@@ -8,7 +8,6 @@ const lpStakingPoolAbi = require('./abi/masterChef.json')
 const lpPairAbi = require('./abi/lpPair.json')
 const onsenData = require('./onsenData')
 
-const rewardsPerEpoch = new BN(config.get('rewardsPerEpoch'))
 const epochDuration = config.get('epochDuration')
 
 const poolId = onsenData.poolId
@@ -21,7 +20,12 @@ const lpStakingPool = new web3.eth.Contract(
 
 const lpPair = new web3.eth.Contract(lpPairAbi, onsenData.pair.address)
 
-function getRewards(addressList, epochEndBlock, thisEpochDuration) {
+function getRewards(
+  addressList,
+  epochEndBlock,
+  thisEpochDuration,
+  rewardsPerEpoch
+) {
   return lpPair.methods
     .balanceOf(onsenData.lpStakingPoolAddress)
     .call(epochEndBlock)
@@ -52,7 +56,12 @@ function getRewards(addressList, epochEndBlock, thisEpochDuration) {
     })
 }
 
-async function getRewardsForAllEpoch(addressList, startBlock, endBlock) {
+async function getRewardsForAllEpoch(
+  addressList,
+  startBlock,
+  endBlock,
+  rewardsPerEpoch
+) {
   const promises = []
   let epochEndBlock = startBlock
   while (epochEndBlock < endBlock) {
@@ -62,11 +71,14 @@ async function getRewardsForAllEpoch(addressList, startBlock, endBlock) {
         getRewards(
           addressList,
           endBlock,
-          endBlock + epochDuration - epochEndBlock
+          endBlock + epochDuration - epochEndBlock,
+          rewardsPerEpoch
         )
       )
     } else {
-      promises.push(getRewards(addressList, epochEndBlock, epochDuration))
+      promises.push(
+        getRewards(addressList, epochEndBlock, epochDuration, rewardsPerEpoch)
+      )
     }
   }
   return Promise.all(promises)

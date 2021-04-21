@@ -4,9 +4,9 @@ const config = require('config')
 const args = require('minimist')(process.argv.slice(2))
 const rewardsStartBlock = args.s || parseInt(config.get('rewardsStartBlock'))
 const rewardsEndBlock = args.e || parseInt(config.get('rewardsEndBlock'))
+const totalRewards = args.t || config.get('totalRewards')
 const nodeUrl = config.get('nodeUrl')
 const epochDuration = config.get('epochDuration')
-const rewardsPerEpoch = config.get('rewardsPerEpoch')
 
 const fs = require('fs')
 const { parseAsync } = require('json2csv')
@@ -18,20 +18,20 @@ const { createDataSet } = require('./src/create-dataset')
 const onsenData = require('./src/onsenData')
 const dataDirectory = 'data'
 // eslint-disable-next-line max-len
-const rewardFileName = `./${dataDirectory}/rewards-${rewardsStartBlock}-${rewardsEndBlock}.json`
+const rewardFile = `./${dataDirectory}/rewards-${rewardsStartBlock}-${rewardsEndBlock}.json`
 // eslint-disable-next-line max-len
-const dataSetFileName = `./${dataDirectory}/dataset-${rewardsStartBlock}-${rewardsEndBlock}.json`
+const dataSetFile = `./${dataDirectory}/dataset-${rewardsStartBlock}-${rewardsEndBlock}.json`
 
 console.log('Rewards Start Block:', rewardsStartBlock)
 console.log('Rewards End Block:', rewardsEndBlock)
 
-function totalRewards() {
+function rewardsPerEpoch() {
   const DECIMAL = new BN('1000000000000000000')
   const totalBlocks = rewardsEndBlock - rewardsStartBlock
   const _epochDuration = new BN(epochDuration)
-  const totalEpoch = new BN(totalBlocks).mul(DECIMAL).div(_epochDuration)
-  const _rewardsPerEpoch = new BN(rewardsPerEpoch)
-  return _rewardsPerEpoch.mul(totalEpoch).div(DECIMAL).toString()
+  const _totalRewards = new BN(totalRewards)
+  const _totalEpoch = new BN(totalBlocks).mul(DECIMAL).div(_epochDuration)
+  return _totalRewards.mul(DECIMAL).div(_totalEpoch).toString()
 }
 
 function onlyUnique(value, index, self) {
@@ -80,14 +80,11 @@ function writeConsolidateRewards(allEpochRewards) {
   })
 
   console.log('Unique address with rewards', accountsList.length)
-  console.log('Total rewards to distibute:', totalRewards())
   console.log('Calculated total rewards:', calculateRewards.toString())
 
-  console.log('Writing consolidated rewards data to', rewardFileName)
+  console.log('Writing consolidated rewards data to', rewardFile)
 
-  fs.writeFileSync(rewardFileName, JSON.stringify(accountsList, null, 2))
-  // Just to terminate the process once done
-  setTimeout(() => process.exit(0), 3000)
+  fs.writeFileSync(rewardFile, JSON.stringify(accountsList, null, 2))
 }
 
 async function getOnsenRewards() {
@@ -112,21 +109,23 @@ async function getOnsenRewards() {
       return uniqueList
     })
     .then(function (addresses) {
+      const _rewardsPerEpoch = rewardsPerEpoch()
+      console.log('_rewardsPerEpoch', _rewardsPerEpoch)
       return getRewardsForAllEpoch(
         addresses,
         rewardsStartBlock,
-        rewardsEndBlock
+        rewardsEndBlock,
+        _rewardsPerEpoch
       )
     })
 }
 
 getOnsenRewards()
-  // if you want data for each epoch, uncomment below line
-  // .then(writeEpochRewards)
   .then(writeConsolidateRewards)
   .then(function () {
-    return createDataSet(rewardFileName, dataSetFileName).then(function () {
+    return createDataSet(rewardFile, dataSetFile).then(function () {
       console.log('data file created')
+      fs.unlinkSync(rewardFile)
     })
   })
   .catch(e => console.error('Error while calculating rewards', e))

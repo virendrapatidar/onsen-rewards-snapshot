@@ -27,17 +27,12 @@ Check other default values in `config/local.json`  and `config/default.json`
    
 Command Syntax   
 ```
-node index.js -s <rewardsStartBlock> -e <rewardsEndBlock>
-```
-
-Example: `calculate-rewards`
-```
-node index.js -s 12194440 -e 12240161
+node index.js -s <rewardsStartBlock> -e <rewardsEndBlock> -t <totalRewards>
 ```
 
 Raise Pull request to verify generated data file. Once PR is verified, approved and merged, call `create-claim` operation. 
 
-4. Create claim using generated data file. 
+1. Create claim using generated data file. 
 
 Command Syntax
 ```
