@@ -1,9 +1,0 @@
-{
-  "nodeUrl": "NODE_URL",
-  "mnemonic": "MNEMONIC",
-  "epochDuration": "EPOCH_DURATION",
-  "totalRewards": "TOTAL_REWARDS",
-  "rewardsStartBlock": "REWARDS_START_BLOCK",
-  "rewardsEndBlock": "REWARDS_END_BLOCK",
-  "expiryDays": "EXPIRY_DAYS"
-}

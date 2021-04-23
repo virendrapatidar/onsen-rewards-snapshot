@@ -8,54 +8,46 @@ Generate snapshot for distributing Vesper rewards to staker of VSP-ETH LP token 
 npm i
 ```
 
-2. Set required properties
-- Set variables for NODE_URL and MNEMONIC
+2. Set required environment variables using `export` or `.env`
 ```
 export NODE_URL="eth_mainnet_url"
 export MNEMONIC="mnemonic"
 ```
 
-Set other variables via command line options or export.
-``` 
-export REWARDS_START_BLOCK="rewardsStartBlock"       
-export REWARDS_END_BLOCK="rewardsEndBlock"           
-```
-
-Check other default values in `config/local.json`  and `config/default.json`
+Check and update (if required) default values in `.env.defaults`
 
 3. Calculate onsen rewards data file using command line args. 
    
 Command Syntax   
 ```
-node index.js -s <rewardsStartBlock> -e <rewardsEndBlock> -t <totalRewards>
+node index.js -s <rewardsStartBlock> -e <rewardsEndBlock>
 ```
 
 Raise Pull request to verify generated data file. Once PR is verified, approved and merged, call `create-claim` operation. 
 
-1. Create claim using generated data file. 
+4. Create claim using generated data file. 
 
 Command Syntax
 ```
 node create-claim.js -f <datasetUrl>
 ```
 
-Example: `create-claim`
-```
-node create-claim.js -f "https://raw.githubusercontent.com/vesperfi/onsen-rewards/main/dataset4.json"
-```
 
-Create claim using fork for testing.
-1. Create `config/local.json` and add `nodeUrl`
-```
-{
-  "nodeUrl": "http://localhost:8545"
-}
-```
-2. Create fork
+Create claim using fork for local testing.
+1. Create fork
 ```
 npm run fork
 ```
-3. Run 
+2. Run below command on another terminal to create a claim. 
+The `swap-eth-to-erc20.js` will swap some VSP to first account of configured `mnemonic`.
 ```
+export NODE_URL="http://localhost:8545"
+node test/swap-eth-to-erc20.js
 node create-claim.js -f <datasetUrl>
+```
+3. Clone `pure.finance` repo and run below command on another terminal. 
+Open `http://localhost:3000/merkle-claims` and Merkle Claims for generated claim id.
+```
+npm install
+npx lerna run --stream dev
 ```

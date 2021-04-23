@@ -1,13 +1,13 @@
 'use strict'
+require('dotenv').config()
+require('dotenv-defaults').config()
 const BN = require('bn.js')
-const config = require('config')
 const args = require('minimist')(process.argv.slice(2))
-const rewardsStartBlock = args.s || parseInt(config.get('rewardsStartBlock'))
-const rewardsEndBlock = args.e || parseInt(config.get('rewardsEndBlock'))
-const totalRewards = args.t || config.get('totalRewards')
-const nodeUrl = config.get('nodeUrl')
-const epochDuration = config.get('epochDuration')
-
+const rewardsStartBlock = parseInt(args.s || process.env.REWARDS_START_BLOCK)
+const rewardsEndBlock = parseInt(args.e || process.env.REWARDS_END_BLOCK)
+const totalRewards = process.env.TOTAL_REWARDS
+const nodeUrl = process.env.NODE_URL
+const epochDuration = parseInt(process.env.EPOCH_DURATION)
 const fs = require('fs')
 const { parseAsync } = require('json2csv')
 const Web3 = require('web3')
