@@ -1,26 +1,24 @@
 #!/usr/bin/env node
 'use strict'
-const config = require('config')
+require('dotenv').config()
 const createErc20 = require('../packages/erc-20-lib')
 const fetch = require('node-fetch')
 const HDWalletProvider = require('@truffle/hdwallet-provider')
 const Web3 = require('web3')
 const createMerkleBox = require('../packages/merkle-box-lib')
 // VSP Token address
-const token = '0xbA4cFE5741b357FA371b506e5db0774aBFeCf8Fc'
-const nodeUrl = config.get('nodeUrl')
-
+const token = '0x1b40183efb4dd766f11bda7a7c3ad8982e998421'
 const provider = new HDWalletProvider({
   addressIndex: process.env.ACCOUNT || 0,
-  mnemonic: config.get('mnemonic'),
+  mnemonic: process.env.MNEMONIC,
   numberOfAddresses: 1,
-  providerOrUrl: nodeUrl
+  providerOrUrl: process.env.NODE_URL
 })
+
 const from = provider.getAddress(0)
 const web3 = new Web3(provider)
 const merkleBoxAddress = createMerkleBox.addresses.mainnet
 const merkleBox = createMerkleBox(web3, merkleBoxAddress, { from })
-
 const tokenAddress = token.startsWith('0x')
   ? token
   : createErc20.util.tokenAddress(token)

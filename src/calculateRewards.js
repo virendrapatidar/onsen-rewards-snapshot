@@ -2,16 +2,14 @@
 
 const BN = require('bn.js')
 const Web3 = require('web3')
-const config = require('config')
-
+require('dotenv').config()
+require('dotenv-defaults').config()
 const lpStakingPoolAbi = require('./abi/masterChef.json')
 const lpPairAbi = require('./abi/lpPair.json')
 const onsenData = require('./onsenData')
-
-const epochDuration = config.get('epochDuration')
-
+const epochDuration = parseInt(process.env.EPOCH_DURATION)
 const poolId = onsenData.poolId
-const web3 = new Web3(config.get('nodeUrl'))
+const web3 = new Web3(process.env.NODE_URL)
 
 const lpStakingPool = new web3.eth.Contract(
   lpStakingPoolAbi,

@@ -5,7 +5,8 @@ node_modules/
 *.tar.gz
 *.sh
 local.json
-*.env*
+.env
 *.idea
 *.iml
+*.env
 .vscode/
