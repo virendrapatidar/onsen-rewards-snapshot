@@ -16,6 +16,7 @@ const provider = new HDWalletProvider({
 })
 
 const from = provider.getAddress(0)
+const gasPrice = process.env.GAS_PRICE
 const web3 = new Web3(provider)
 const merkleBoxAddress = createMerkleBox.addresses.mainnet
 const merkleBox = createMerkleBox(web3, merkleBoxAddress, { from })
@@ -49,7 +50,7 @@ function createClaimGroup(datasetUrl, expiryDays) {
       return Promise.all([
         total,
         root,
-        createErc20(web3, tokenAddress, { from }).approve(
+        createErc20(web3, tokenAddress, { from, gasPrice }).approve(
           merkleBoxAddress,
           total
         )
@@ -61,7 +62,8 @@ function createClaimGroup(datasetUrl, expiryDays) {
         total,
         root,
         toTimestamp(expiryDate),
-        memo
+        memo,
+        { gasPrice }
       )
     )
     .then(function (receipt) {
