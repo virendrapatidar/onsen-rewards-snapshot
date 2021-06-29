@@ -13,7 +13,10 @@
     "lint:fix": "eslint --cache --fix .",
     "postinstall": "lerna bootstrap",
     "snapshot": "node index.js",
-    "create-claim": "node create-claim.js"
+    "create-claim": "node create-claim.js",
+    "create-data-file": "scripts/create-data-file.sh",
+    "validate-data-file": "node data-file-validator.js",
+    "automated-create-claim": "scripts/create-claim.sh"
   },
   "dependencies": {
     "@truffle/hdwallet-provider": "^1.2.0",
