@@ -16,7 +16,7 @@ const lpStakingPoolAbi = require('./src/abi/masterChef.json')
 const { getRewardsForAllEpoch } = require('./src/calculateRewards')
 const { createDataSet } = require('./src/create-dataset')
 const onsenData = require('./src/onsenData')
-const dataDirectory = 'data'
+const dataDirectory = process.env.DIRECTORY || 'data'
 // eslint-disable-next-line max-len
 const rewardFile = `./${dataDirectory}/rewards-${rewardsStartBlock}-${rewardsEndBlock}.json`
 // eslint-disable-next-line max-len
@@ -129,3 +129,7 @@ getOnsenRewards()
     })
   })
   .catch(e => console.error('Error while calculating rewards', e))
+
+module.exports = {
+  getOnsenRewards
+}

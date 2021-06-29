@@ -3,10 +3,12 @@ node_modules/
 .eslintcache
 *.csv
 *.tar.gz
-*.sh
 local.json
 .env
 *.idea
 *.iml
 *.env
 .vscode/
+scripts/output.log
+scripts/token.txt
+temp
