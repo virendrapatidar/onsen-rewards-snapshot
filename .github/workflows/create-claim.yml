@@ -20,12 +20,11 @@ jobs:
 
       - name: Install node dependencies
         run: npm install
-
+      
       - name: Automated Create Claim
         env:
           NODE_URL: ${{ secrets.NODE_URL }}
           MNEMONIC: ${{ secrets.MNEMONIC }}
-          PULL_REQUEST_TITLE: ${{ github.event.pull_request.title }}
           REPO: "virendrapatidar/onsen-rewards-snapshot"
         run: npm run automated-create-claim
           
